@@ -63,7 +63,23 @@ shinyUI(fluidPage(
                                 selectizeInput("preds","Select Predictor Variable(s)",
                                                 selected="All",
                                                 choices=c("All",names(creditData)))
-                             )
+                             ),
+            #sidebar settings for "Data" tab
+            conditionalPanel(condition="input.tabselected==5",
+                             
+                             radioButtons("marRBDat","Subset by Married Status?",
+                                          selected = ("Do Not Subset"),
+                                          choices=list("Married","Single","Do Not Subset")),
+                             
+                             radioButtons("edRBDat","Subset by Education?",
+                                          selected = ("Do Not Subset"),
+                                          choices=list("Grad School","University","Highschool","Other","Do Not Subset")),
+                             actionButton("save","Save CSV")
+                             
+         
+                             
+            )
+            
             
             ),
     
@@ -89,7 +105,8 @@ shinyUI(fluidPage(
                             verbatimTextOutput("mResults")
                              ),
                     tabPanel("Data", value=5,
-                             textOutput("data")
+                             textOutput("data"),
+                             tableOutput("dataTable")
                              ),
                     id="tabselected"
         )
