@@ -8,9 +8,12 @@ shinyUI(fluidPage(
         uiOutput("title")
     ),
     
+
     # Sidebar with options for the data set
     sidebarLayout(
         sidebarPanel(
+            #sidebar settings for "Explore" tab
+            conditionalPanel(condition="input.tabselected==2",
             
             radioButtons("marRB","Subset by Married Status?",
                          selected = ("Do Not Subset"),
@@ -34,27 +37,53 @@ shinyUI(fluidPage(
                                             selected = "LIMIT_BAL", 
                                             choices = c("LIMIT_BAL","AGE")),
             )
+            ),
             
-        ),
-       
+            #sidebar settings for "Clustering" tab
+            conditionalPanel(condition="input.tabselected==3",
+                             
+                             radioButtons("marRB","Subset by Married Status?",
+                                          selected = ("Do Not Subset"),
+                                          choices=list("Married","Single","Do Not Subset")),
+                             
+                             radioButtons("edRB","Subset by Education?",
+                                          selected = ("Do Not Subset"),
+                                          choices=list("Grad School","University","Highschool","Other","Do Not Subset")),
+                             
+                             selectizeInput("var1", "Select Variable 1", selected = names(creditData)[[2]], 
+                                            choices = names(creditData)),
+                             selectizeInput("var2", "Select Variable 2", selected = names(creditData)[[3]], 
+                                            choices = names(creditData)),
+                             )
+            ),
+    
+    mainPanel(
         
-        # Show outputs
-        mainPanel(
-            
-                
-                # Tabset w/ Information, Data Exploration, Clustering, Modeling, Data.
-                tabsetPanel(type = "tabs",
-                            tabPanel("Info", textOutput("info")),
-                            tabPanel("Explore", 
-                                     plotOutput("creditPlot"),
-                                     textOutput("selections"),
-                                     tableOutput("table")
-                            ),
-                            tabPanel("Clustering", textOutput("cluster")),
-                            tabPanel("Modeling", textOutput("model")),
-                            tabPanel("Data", textOutput("data"))
-                )
-
+        
+        # Tabset w/ Information, Data Exploration, Clustering, Modeling, Data.
+        tabsetPanel(type = "tabs",
+                    tabPanel("Info", value=1,
+                             textOutput("info")
+                             ),
+                    tabPanel("Explore", value=2,
+                             plotOutput("creditPlot"),
+                             textOutput("selections"),
+                             tableOutput("table")
+                    ),
+                    tabPanel("Clustering", value=3,
+                             textOutput("cluster"),
+                             plotOutput("dend")
+                    ),
+                    tabPanel("Modeling", value=4,
+                             textOutput("model")
+                             ),
+                    tabPanel("Data", value=5,
+                             textOutput("data")
+                             ),
+                    id="tabselected"
         )
     )
-))
+    )
+
+    )
+)

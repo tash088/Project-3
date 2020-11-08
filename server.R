@@ -65,6 +65,12 @@ shinyServer(function(input, output, session) {
         "This will be clustering page"
     })
     
+    output$dend<-renderPlot({
+        
+        hierClust <- hclust(dist(data.frame(input$var1, input$var2)))
+        plot(hierClust, xlab = "")
+    })
+    
     output$model<-renderText({
         "This will be modeling page"
     })
