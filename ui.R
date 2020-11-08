@@ -4,8 +4,8 @@ library(readxl)
 shinyUI(fluidPage(
     
     # Application title
-    titlePanel(
-        uiOutput("title")
+    titlePanel("Credit Card Default Data"
+
     ),
     
 
@@ -54,7 +54,17 @@ shinyUI(fluidPage(
                                             choices = names(creditData)),
                              selectizeInput("var2", "Select Variable 2", selected = names(creditData)[[3]], 
                                             choices = names(creditData)),
+            ),
+            conditionalPanel(condition="input.tabselected==4",
+                             selectizeInput("mType","Select Model Type",
+                                            selected="Logistic Regression",
+                                            choices=c("Logistic Regression","Decision Tree")),
+                                
+                                selectizeInput("preds","Select Predictor Variable(s)",
+                                                selected="All",
+                                                choices=c("All",names(creditData)))
                              )
+            
             ),
     
     mainPanel(
@@ -66,8 +76,8 @@ shinyUI(fluidPage(
                              textOutput("info")
                              ),
                     tabPanel("Explore", value=2,
+                             uiOutput("title"),
                              plotOutput("creditPlot"),
-                             textOutput("selections"),
                              tableOutput("table")
                     ),
                     tabPanel("Clustering", value=3,
@@ -75,7 +85,8 @@ shinyUI(fluidPage(
                              plotOutput("dend")
                     ),
                     tabPanel("Modeling", value=4,
-                             textOutput("model")
+                             textOutput("model"),
+                            verbatimTextOutput("mResults")
                              ),
                     tabPanel("Data", value=5,
                              textOutput("data")

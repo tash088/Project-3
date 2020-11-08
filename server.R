@@ -40,12 +40,6 @@ shinyServer(function(input, output, session) {
         }
     })
     
-
-    #show selections
-    output$selections<-renderText({
-        paste0("gtype is ", input$gtype, " histVar is ", input$histVar," boxVar is", input$boxVar)
-    })
-    
     #create dynamic title
     output$title<-renderUI({
         paste0(input$gtype," of Credit Data")
@@ -72,7 +66,42 @@ shinyServer(function(input, output, session) {
     })
     
     output$model<-renderText({
-        "This will be modeling page"
+        paste0("modeling goes here",input$preds)
+    })
+    
+    output$mResults<-renderPrint({
+    if(input$mType=="Logistic Regression"){
+     if(input$preds=="All"){
+               fitLogit<-train(default ~ ., data=creditData, method="glm", family="binomial", 
+                           preProcess=c("center","scale"), 
+                           trControl=trainControl(method="cv",number=10))
+           fitLogit
+       } 
+       else {
+           myexp <- paste0("default", "~", input$preds)
+           fitLogit<-train(as.formula(myexp), data=creditData, method="glm", family="binomial", 
+                           preProcess=c("center","scale"), 
+                           trControl=trainControl(method="cv",number=10))
+           fitLogit
+       }
+    }
+    else {
+        if(input$preds=="All"){
+            fitTree<-train(default ~ ., data=creditData, method="rpart",
+                            preProcess=c("center","scale"),
+                            trControl=trainControl(method="cv",number=10),
+                            tuneGrid=NULL)
+            fitTree
+        } 
+        else {
+            myexp <- paste0("default", "~", input$preds)
+            fitTree<-train(as.formula(myexp), data=creditData, method="rpart",
+                           preProcess=c("center","scale"),
+                           trControl=trainControl(method="cv",number=10),
+                           tuneGrid=NULL)
+            fitTree
+        }
+    }
     })
     
     output$data<-renderText({
