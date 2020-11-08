@@ -3,6 +3,8 @@ library(readxl)
 
 shinyUI(fluidPage(
     
+    withMathJax(),
+    
     # Application title
     titlePanel("Credit Card Default Data"
 
@@ -89,7 +91,17 @@ shinyUI(fluidPage(
         # Tabset w/ Information, Data Exploration, Clustering, Modeling, Data.
         tabsetPanel(type = "tabs",
                     tabPanel("Info", value=1,
-                             textOutput("info")
+                             "This app is designed in R shiny to conduct exploratory data
+                             analysis and modeling on Taiwanese credit card default data.  
+                             for simplicity, the variables have been subsetted to excluded 
+                             the through-time payment and balance data. More details on the data
+                              set are available ",
+                             a(href="https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients",
+                               target="_blank","here"),
+                             ". The modeling page will allow you to use Logistic Regression 
+                             and/or Decision Trees to predict whether a borrower will default. 
+                             On the data tab, you can view the raw data and save it out to a CSV
+                             file if desired"
                              ),
                     tabPanel("Explore", value=2,
                              uiOutput("title"),
@@ -101,6 +113,7 @@ shinyUI(fluidPage(
                              plotOutput("dend")
                     ),
                     tabPanel("Modeling", value=4,
+                             uiOutput("mJ"),
                              textOutput("model"),
                             verbatimTextOutput("mResults")
                              ),

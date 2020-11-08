@@ -55,7 +55,9 @@ shinyServer(function(input, output, session) {
     })
     
     output$info<-renderText({
-        "This will be info page"
+        "This app was built using R Shiny. It allows the user to explore data on 
+        credit card defaults in Taiwan. The data comes from the UCI learning repository, 
+        <click here> for more detail"
     })
     
     output$cluster<-renderText({
@@ -71,6 +73,19 @@ shinyServer(function(input, output, session) {
     output$model<-renderText({
         paste0("modeling goes here",input$preds)
     })
+    
+  
+        output$mJ <- renderUI({
+                if(input$mType=="Logistic Regression"){
+                 withMathJax(
+              helpText('When Y is categorical, as in this case, for logistic regression 
+             we use the logit of Y as the response in our regression equation instead of just Y: 
+                     $$log(\\frac{P}{1-P}) = \\beta_0+\\beta_1X_1+\\beta_2X_2+...++\\beta_kX_k$$')
+            )
+                }
+        
+        })
+    
     
     output$mResults<-renderPrint({
     if(input$mType=="Logistic Regression"){
@@ -107,10 +122,6 @@ shinyServer(function(input, output, session) {
     }
     })
     
-    output$data<-renderText({
-        "This will be data page"
-    })
-    
     output$dataTable <- renderTable({
         #apply marriage status filter if applicable
         if(input$marRBDat=="Married"){creditData<-filter(creditData,MARRIAGE==1)}
@@ -120,10 +131,12 @@ shinyServer(function(input, output, session) {
         if(input$edRBDat=="University"){creditData<-filter(creditData,EDUCATION==2)}
         if(input$edRBDat=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
         if(input$edRBDat=="Other"){creditData<-filter(creditData,EDUCATION==4)}
-        view(creditData)
         if(input$save>0){write.csv(creditData,"./creditData_file.csv", row.names = FALSE)}
+        view(creditData)
         
     })
+    
+    
     
     
 })
