@@ -2,6 +2,8 @@ library(shiny)
 library(dplyr)
 library(ggplot2)
 library(tidyverse)
+library(miscTools)
+library(knitr)
 
 shinyServer(function(input, output, session) {
     
@@ -9,6 +11,14 @@ shinyServer(function(input, output, session) {
         creditData <- read_excel("default of credit card clients.xlsx",col_names=TRUE)
         creditData<-rename(creditData,default=`default payment next month`)
         creditData$default<-as.factor(creditData$default)
+        #apply marriage status filter if applicable
+        if(input$marRB=="Married"){creditData<-filter(creditData,MARRIAGE==1)}
+        if(input$marRB=="Single"){creditData<-filter(creditData,MARRIAGE==2)}
+        #apply education filter if applicable
+        if(input$edRB=="Grad School"){creditData<-filter(creditData,EDUCATION==1)}
+        if(input$edRB=="University"){creditData<-filter(creditData,EDUCATION==2)}
+        if(input$edRB=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
+        if(input$edRB=="Other"){creditData<-filter(creditData,EDUCATION==4)}
         creditData
     })
     
@@ -21,11 +31,12 @@ shinyServer(function(input, output, session) {
         g <- ggplot(creditData)
         
         if(input$gtype=="Boxplot"){
-                g + geom_boxplot(aes_string(x="default",y=input$boxVar))
+                g + geom_boxplot(aes_string(x="default",y=input$boxVar)) +
+                ylim(0,1000000)
             
             
         } else {
-            g + geom_histogram(aes_string(x=input$histVar))
+            g + geom_histogram(aes_string(x=input$histVar)) + ylim(0,7500) 
         }
     })
     
@@ -40,9 +51,27 @@ shinyServer(function(input, output, session) {
         paste0(input$gtype," of Credit Data")
     })
     
-    #create output of observations    
-    #output$table <- renderTable({
-        #creditData()
-    #})
+    #Five number summary
+    output$table <- renderTable({
+        summary(select(creditData,LIMIT_BAL,EDUCATION,SEX,MARRIAGE,AGE))
+ 
+    })
+    
+    output$info<-renderText({
+        "This will be info page"
+    })
+    
+    output$cluster<-renderText({
+        "This will be clustering page"
+    })
+    
+    output$model<-renderText({
+        "This will be modeling page"
+    })
+    
+    output$data<-renderText({
+        "This will be data page"
+    })
+    
     
 })
