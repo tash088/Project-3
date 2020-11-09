@@ -1,5 +1,19 @@
 library(ggplot2)
 library(readxl)
+library(shiny)
+library(dplyr)
+library(ggplot2)
+library(tidyverse)
+library(miscTools)
+library(knitr)
+library(caret)
+
+#read in data
+creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
+creditData<-rename(creditData,default=`default payment next month`)
+creditData$default<-as.factor(creditData$default)
+#to make processing quicker for now 
+creditData<-creditData[1:1000,]
 
 shinyUI(fluidPage(
     
