@@ -9,7 +9,7 @@ library(caret)
 shinyServer(function(input, output, session) {
     
     getData <- reactive({
-        creditData <- read_excel("default of credit card clients.xlsx",col_names=TRUE)
+        creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
         creditData<-rename(creditData,default=`default payment next month`)
         creditData$default<-as.factor(creditData$default)
         #to make processing quicker for now 
@@ -79,7 +79,7 @@ shinyServer(function(input, output, session) {
         
         hierClust <- hclust(dist(data.frame(creditData[input$var1], creditData[input$var2])),
                             method=input$clustMeth)
-        plot(hierClust, xlab = "")
+        plot(hierClust, xlab = paste0("Dendrogram Showing Clustering of ",input$var1," and ", input$var2))
     })
     
     output$model<-renderText({

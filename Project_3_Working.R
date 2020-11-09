@@ -3,7 +3,7 @@ library(dplyr)
 library(readxl)
 library(caret)
 
-creditData <- read_excel("default of credit card clients.xlsx",col_names=TRUE)
+creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
 creditData<-rename(creditData,default=`default payment next month`)
 creditData<-select(creditData,LIMIT_BAL,SEX,EDUCATION,MARRIAGE,AGE,default)
 creditData$default<-as.factor(creditData$default)
