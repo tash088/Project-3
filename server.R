@@ -6,14 +6,16 @@ library(miscTools)
 library(knitr)
 library(caret)
 
+#read in data
+creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
+creditData<-rename(creditData,default=`default payment next month`)
+creditData$default<-as.factor(creditData$default)
+#to make processing quicker for now 
+creditData<-creditData[1:1000,]
+
 shinyServer(function(input, output, session) {
     
     getData <- reactive({
-        creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
-        creditData<-rename(creditData,default=`default payment next month`)
-        creditData$default<-as.factor(creditData$default)
-        #to make processing quicker for now 
-        creditData<-creditData[1:1000,]
         #apply marriage status filter if applicable
         if(input$marRB=="Married"){creditData<-filter(creditData,MARRIAGE==1)}
         if(input$marRB=="Single"){creditData<-filter(creditData,MARRIAGE==2)}
