@@ -105,18 +105,23 @@ shinyUI(fluidPage(
                              ),
                     tabPanel("Explore", value=2,
                              uiOutput("title"),
-                             plotOutput("creditPlot"),
+                             "Click a point on graph to get x/y values",
+                             verbatimTextOutput("click_info"),
+                             plotOutput("creditPlot",click = "plot_click"),
                              tableOutput("table")
-                    ),
+                             ),
+                    
                     tabPanel("Clustering", value=3,
                              textOutput("cluster"),
                              plotOutput("dend")
                     ),
+                    
                     tabPanel("Modeling", value=4,
                              uiOutput("mJ"),
                              textOutput("model"),
                             verbatimTextOutput("mResults")
                              ),
+                    
                     tabPanel("Data", value=5,
                              textOutput("data"),
                              tableOutput("dataTable")

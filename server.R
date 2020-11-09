@@ -136,6 +136,10 @@ shinyServer(function(input, output, session) {
         
     })
     
+    output$click_info <- renderText({
+        paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
+    })
+    
     
     
     
