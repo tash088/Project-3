@@ -18,11 +18,11 @@ shinyUI(fluidPage(
             conditionalPanel(condition="input.tabselected==2",
             
             radioButtons("marRB","Subset by Married Status?",
-                         selected = ("Do Not Subset"),
+                         selected = "Do Not Subset",
                          choices=list("Married","Single","Do Not Subset")),
             
             radioButtons("edRB","Subset by Education?",
-                         selected = ("Do Not Subset"),
+                         selected = "Do Not Subset",
                          choices=list("Grad School","University","Highschool","Other","Do Not Subset")),
             
             selectizeInput("gtype", "Select graph type:", selected = "Histogram", 
@@ -31,7 +31,7 @@ shinyUI(fluidPage(
             conditionalPanel(condition="input.gtype=='Histogram'",
                              selectizeInput("histVar", "Select variable for histogram:", 
                                             selected = "LIMIT_BAL", 
-                                            choices = c("LIMIT_BAL","AGE","default")),
+                                            choices = c("LIMIT_BAL","AGE")),
             ),
             
             conditionalPanel(condition="input.gtype=='Boxplot'",
@@ -44,18 +44,22 @@ shinyUI(fluidPage(
             #sidebar settings for "Clustering" tab
             conditionalPanel(condition="input.tabselected==3",
                              
-                             radioButtons("marRB","Subset by Married Status?",
+                             radioButtons("marRBClust","Subset by Married Status?",
                                           selected = ("Do Not Subset"),
                                           choices=list("Married","Single","Do Not Subset")),
                              
-                             radioButtons("edRB","Subset by Education?",
+                             radioButtons("edRBClust","Subset by Education?",
                                           selected = ("Do Not Subset"),
                                           choices=list("Grad School","University","Highschool","Other","Do Not Subset")),
                              
-                             selectizeInput("var1", "Select Variable 1", selected = names(creditData)[[2]], 
+                             selectizeInput("var1", "Select Variable 1", selected = names(creditData)[[5]], 
                                             choices = names(creditData)),
-                             selectizeInput("var2", "Select Variable 2", selected = names(creditData)[[3]], 
+                             selectizeInput("var2", "Select Variable 2", selected = names(creditData)[[1]], 
                                             choices = names(creditData)),
+                             
+                             selectizeInput("clustMeth", "Select agglomeration method", 
+                                            selected = "complete", 
+                                            choices = c("complete","single","average","centroid")),
             ),
             conditionalPanel(condition="input.tabselected==4",
                              selectizeInput("mType","Select Model Type",
@@ -91,17 +95,29 @@ shinyUI(fluidPage(
         # Tabset w/ Information, Data Exploration, Clustering, Modeling, Data.
         tabsetPanel(type = "tabs",
                     tabPanel("Info", value=1,
-                             "This app is designed in R shiny to conduct exploratory data
+                             h3("General Information"),
+                             "This app, designed with R Shiny, can be used to conduct exploratory data
                              analysis and modeling on Taiwanese credit card default data.  
-                             for simplicity, the variables have been subsetted to excluded 
-                             the through-time payment and balance data. More details on the data
-                              set are available ",
+                              More details on the data set are available on the ",
                              a(href="https://archive.ics.uci.edu/ml/datasets/default+of+credit+card+clients",
-                               target="_blank","here"),
-                             ". The modeling page will allow you to use Logistic Regression 
-                             and/or Decision Trees to predict whether a borrower will default. 
-                             On the data tab, you can view the raw data and save it out to a CSV
-                             file if desired"
+                               target="_blank","UCI Machine Learning website"),
+                             ".",
+                             br(),
+                             br(),
+                             "For simplicity, the data has been subsetted to excluded 
+                             the time-series variables. The modeling page will 
+                             allow the user to run",
+                             em("Logistic Regression"),
+                             "and/or",
+                             em("Decision Trees"),
+                             "models to predict whether a borrower will default. On the data tab, 
+                             you can view the raw data and save it out to a CSV
+                             file if desired. Simply click on the tabs at the top of the page to 
+                             navigate between them.",
+                             br(),
+                             br(),
+                             "Note that many of the tabs have options to filter the data and/or customize
+                             the output, so keep an eye out for those options in the sidebar panel."
                              ),
                     tabPanel("Explore", value=2,
                              uiOutput("title"),

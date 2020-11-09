@@ -22,6 +22,14 @@ shinyServer(function(input, output, session) {
         if(input$edRB=="University"){creditData<-filter(creditData,EDUCATION==2)}
         if(input$edRB=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
         if(input$edRB=="Other"){creditData<-filter(creditData,EDUCATION==4)}
+        #apply marriage status filter if applicable (for cluster tab)
+        if(input$marRBClust=="Married"){creditData<-filter(creditData,MARRIAGE==1)}
+        if(input$marRBClust=="Single"){creditData<-filter(creditData,MARRIAGE==2)}
+        #apply education filter if applicable (for cluster tab)
+        if(input$edRBClust=="Grad School"){creditData<-filter(creditData,EDUCATION==1)}
+        if(input$edRBClust=="University"){creditData<-filter(creditData,EDUCATION==2)}
+        if(input$edRBClust=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
+        if(input$edRBClust=="Other"){creditData<-filter(creditData,EDUCATION==4)}
         creditData
     })
     
@@ -34,12 +42,14 @@ shinyServer(function(input, output, session) {
         g <- ggplot(creditData)
         
         if(input$gtype=="Boxplot"){
-                g + geom_boxplot(aes_string(x="default",y=input$boxVar)) +
-                ylim(0,1000000)
+                g <- g + geom_boxplot(aes_string(x="default",y=input$boxVar))
+            if(input$boxVar=="LIMIT_BAL"){g + ylim(0,750000)}
+                else{g+ylim(0,80)}
+                
             
             
         } else {
-            g + geom_histogram(aes_string(x=input$histVar)) + ylim(0,7500) 
+            g + geom_histogram(aes_string(x=input$histVar))
         }
     })
     
@@ -64,9 +74,11 @@ shinyServer(function(input, output, session) {
         "This will be clustering page"
     })
     
+
     output$dend<-renderPlot({
         
-        hierClust <- hclust(dist(data.frame(input$var1, input$var2)))
+        hierClust <- hclust(dist(data.frame(creditData[input$var1], creditData[input$var2])),
+                            method=input$clustMeth)
         plot(hierClust, xlab = "")
     })
     
@@ -137,7 +149,7 @@ shinyServer(function(input, output, session) {
     })
     
     output$click_info <- renderText({
-        paste0("x=", input$plot_click$x, "\ny=", input$plot_click$y)
+        paste0("x=", format(input$plot_click$x,digits=2), "\ny=", format(input$plot_click$y,digits=2))
     })
     
     
