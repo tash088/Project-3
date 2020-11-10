@@ -1,10 +1,7 @@
-library(shiny)
-library(dplyr)
 library(ggplot2)
-library(tidyverse)
-library(miscTools)
-library(knitr)
 library(caret)
+library(readxl)
+library(tidyverse)
 
 #read in data
 creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
