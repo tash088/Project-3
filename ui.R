@@ -1,3 +1,7 @@
+library(ggplot2) 
+library(caret) 
+library(readxl) 
+library(tidyverse)
 
 #read in data
 creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
