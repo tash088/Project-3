@@ -59,14 +59,6 @@ shinyUI(fluidPage(
             #sidebar settings for "Clustering" tab
             conditionalPanel(condition="input.tabselected==3",
                              
-                             radioButtons("marRBClust","Subset by Married Status?",
-                                          selected = ("Do Not Subset"),
-                                          choices=list("Married","Single","Do Not Subset")),
-                             
-                             radioButtons("edRBClust","Subset by Education?",
-                                          selected = ("Do Not Subset"),
-                                          choices=list("Grad School","University","Highschool","Other","Do Not Subset")),
-                             
                              selectizeInput("var1", "Select Variable 1", selected = names(creditData)[[5]], 
                                             choices = names(creditData)),
                              selectizeInput("var2", "Select Variable 2", selected = names(creditData)[[1]], 
@@ -88,14 +80,14 @@ shinyUI(fluidPage(
                             numericInput("cvFolds","Choose # of Folds for Cross-Validation (Between 2 and 10)",
                                          value=5,min=2,max=10,step=1),
                             
-                            "The results indicate that PAY_0 (# of months behind in prior month, where -1 indicates current) 
+                            "The results indicate that PAY_0 (# of months behind in prior month, where 0 indicates current) 
                             has the most predictive power. Use the dropdown below to predict the probability of default based
                             on the PAY_0 value.",
                             
                             
                             selectizeInput("payPred","Select a value for PAY_0 to see the resulting probability of default:",
-                                           selected=c(-1),
-                                           choices=c(-1,1:9)),
+                                           selected=c(0),
+                                           choices=c(-2,-1,0,1:9)),
                             
                              ),
             #sidebar settings for "Data" tab
@@ -152,7 +144,7 @@ shinyUI(fluidPage(
                              "Click a point on graph to get x/y values",
                              verbatimTextOutput("click_info"),
                              plotOutput("creditPlot",click = "plot_click"),
-                             tableOutput("table")
+                             verbatimTextOutput("numSummary")
                              ),
                     
                     tabPanel("Clustering", value=3,

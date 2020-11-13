@@ -25,14 +25,6 @@ shinyServer(function(input, output, session) {
         if(input$edRB=="University"){creditData<-filter(creditData,EDUCATION==2)}
         if(input$edRB=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
         if(input$edRB=="Other"){creditData<-filter(creditData,EDUCATION==4)}
-        #apply marriage status filter if applicable (for cluster tab)
-        if(input$marRBClust=="Married"){creditData<-filter(creditData,MARRIAGE==1)}
-        if(input$marRBClust=="Single"){creditData<-filter(creditData,MARRIAGE==2)}
-        #apply education filter if applicable (for cluster tab)
-        if(input$edRBClust=="Grad School"){creditData<-filter(creditData,EDUCATION==1)}
-        if(input$edRBClust=="University"){creditData<-filter(creditData,EDUCATION==2)}
-        if(input$edRBClust=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
-        if(input$edRBClust=="Other"){creditData<-filter(creditData,EDUCATION==4)}
         creditData
     })
     
@@ -62,8 +54,8 @@ shinyServer(function(input, output, session) {
     })
     
     #Five number summary
-    output$table <- renderTable({
-        summary(select(creditData,LIMIT_BAL,EDUCATION,SEX,MARRIAGE,AGE))
+    output$numSummary <- renderPrint({
+        summary(select(creditData,LIMIT_BAL,EDUCATION,SEX,MARRIAGE,AGE,PAY_0))
  
     })
     

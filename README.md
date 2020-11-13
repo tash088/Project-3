@@ -3,10 +3,7 @@ Final Project for ST558 (Fall 2020)
 
 The following packages are needed to run the application. For ease of use, I have provided code here to both install the packages (if needed) and to call them via the library function:
 
-install.packages("ggplot2")  
-install.packages("caret")  
-install.packages("readxl")  
-install.packages("tidyverse")  
+install.packages(c("tidyverse","readxl","caret","ggplot2"))
   
 library(ggplot2)  
 library(caret)  
