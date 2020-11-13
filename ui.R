@@ -3,10 +3,16 @@ library(caret)
 library(readxl) 
 library(tidyverse)
 
-#read in data
 creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
 creditData<-rename(creditData,default=`default payment next month`)
+creditData<-select(creditData,LIMIT_BAL,SEX,EDUCATION,MARRIAGE,AGE,PAY_0,default)
 creditData$default<-as.factor(creditData$default)
+creditData$SEX<-as.factor(creditData$SEX)
+creditData$EDUCATION<-as.factor(creditData$EDUCATION)
+creditData$MARRIAGE<-as.factor(creditData$MARRIAGE)
+creditData$PAY_0<-creditData$PAY_0
+creditDataPreds<-select(creditData,-default)
+
 #to make processing quicker for now 
 creditData<-creditData[1:1000,]
 
@@ -75,9 +81,22 @@ shinyUI(fluidPage(
                                             selected="Logistic Regression",
                                             choices=c("Logistic Regression","Decision Tree")),
                                 
-                                selectizeInput("preds","Select Predictor Variable(s)",
+                            selectizeInput("preds","Select Predictor Variable(s)",
                                                 selected="All",
-                                                choices=c("All",names(creditData)))
+                                                choices=c("All",names(creditDataPreds))),
+                            
+                            numericInput("cvFolds","Choose # of Folds for Cross-Validation (Between 2 and 10)",
+                                         value=5,min=2,max=10,step=1),
+                            
+                            "The results indicate that PAY_0 (# of months behind in prior month, where -1 indicates current) 
+                            has the most predictive power. Use the dropdown below to predict the probability of default based
+                            on the PAY_0 value.",
+                            
+                            
+                            selectizeInput("payPred","Select a value for PAY_0 to see the resulting probability of default:",
+                                           selected=c(-1),
+                                           choices=c(-1,1:9)),
+                            
                              ),
             #sidebar settings for "Data" tab
             conditionalPanel(condition="input.tabselected==5",
@@ -144,7 +163,8 @@ shinyUI(fluidPage(
                     tabPanel("Modeling", value=4,
                              uiOutput("mJ"),
                              textOutput("model"),
-                            verbatimTextOutput("mResults")
+                            verbatimTextOutput("mResults"),
+                            verbatimTextOutput("pResults")
                              ),
                     
                     tabPanel("Data", value=5,

@@ -3,36 +3,35 @@ library(dplyr)
 library(readxl)
 library(caret)
 
+help(predict)
+
 creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
 creditData<-rename(creditData,default=`default payment next month`)
-creditData<-select(creditData,LIMIT_BAL,SEX,EDUCATION,MARRIAGE,AGE,default)
+creditData<-select(creditData,LIMIT_BAL,SEX,EDUCATION,MARRIAGE,AGE,PAY_0,default)
 creditData$default<-as.factor(creditData$default)
-creditData<-creditData[1:1000,]
+creditData$SEX<-as.factor(creditData$SEX)
+creditData$EDUCATION<-as.factor(creditData$EDUCATION)
+creditData$MARRIAGE<-as.factor(creditData$MARRIAGE)
+creditData$PAY_0<-creditData$PAY_0
 creditData
 
-fitTree1<-train(default ~ LIMIT_BAL, data=creditData, method="rpart",
+myexp <- paste0("default", "~", "PAY_0")
+fitLogitPred<-train(as.formula(myexp), data=creditData, method="glm", family="binomial", 
+                    preProcess=c("center","scale"), 
+                    trControl=trainControl(method="cv",number=10))
+fitLogitPred
+fitLogitPred$coefnames
+predPay<-predict(fitLogitPred,newdata= data.frame(PAY_0=c(2)),type="prob")
+predPay[1,2]
+
+
+fitTree<-train(as.formula(myexp), data=creditData, method="rpart",
                preProcess=c("center","scale"),
-               trControl=trainControl(method="cv",number=10),
+               trControl=trainControl(method="cv",number=5),
                tuneGrid=NULL)
-
-fitTree2<-train(default ~ EDUCATION, data=creditData, method="rpart",
-               preProcess=c("center","scale"),
-               trControl=trainControl(method="cv",number=10),
-               tuneGrid=NULL)
-
-fitLogit1<-train(default ~ LIMIT_BAL, data=creditData, method="glm", family="binomial", 
-                preProcess=c("center","scale"), 
-                trControl=trainControl(method="cv",number=2))
-
-fitLogit2<-train(default ~ EDUCATION, data=creditData, method="glm", family="binomial", 
-                preProcess=c("center","scale"), 
-                trControl=trainControl(method="cv",number=2))
-
-fitTree1
-fitTree2
-fitLogit1
-fitLogit2
-
+fitTree
+predPay<-predict(fitTree,newdata= data.frame(PAY_0=c(-1)),type="prob")
+predPay[1,2]
 
 
   

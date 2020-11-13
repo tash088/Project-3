@@ -3,10 +3,14 @@ library(caret)
 library(readxl)
 library(tidyverse)
 
-#read in data
 creditData <- read_excel("creditCardData.xlsx",col_names=TRUE)
 creditData<-rename(creditData,default=`default payment next month`)
+creditData<-select(creditData,LIMIT_BAL,SEX,EDUCATION,MARRIAGE,AGE,PAY_0,default)
 creditData$default<-as.factor(creditData$default)
+creditData$SEX<-as.factor(creditData$SEX)
+creditData$EDUCATION<-as.factor(creditData$EDUCATION)
+creditData$MARRIAGE<-as.factor(creditData$MARRIAGE)
+creditData$PAY_0<-creditData$PAY_0
 #to make processing quicker for now 
 creditData<-creditData[1:1000,]
 
@@ -70,11 +74,14 @@ shinyServer(function(input, output, session) {
     })
     
     output$cluster<-renderText({
-        "This will be clustering page"
+        "This is a dendrogram showing the hierarchical clustering of
+          the first 500 observations in our data set"
     })
     
 
     output$dend<-renderPlot({
+        #to make processing quicker for now 
+        creditData<-creditData[1:500,]
         
         hierClust <- hclust(dist(data.frame(creditData[input$var1], creditData[input$var2])),
                             method=input$clustMeth)
@@ -103,22 +110,23 @@ shinyServer(function(input, output, session) {
      if(input$preds=="All"){
                fitLogit<-train(default ~ ., data=creditData, method="glm", family="binomial", 
                            preProcess=c("center","scale"), 
-                           trControl=trainControl(method="cv",number=10))
+                           trControl=trainControl(method="cv",number=input$cvFolds))
            fitLogit
-       } 
+       }
        else {
            myexp <- paste0("default", "~", input$preds)
            fitLogit<-train(as.formula(myexp), data=creditData, method="glm", family="binomial", 
                            preProcess=c("center","scale"), 
-                           trControl=trainControl(method="cv",number=10))
+                           trControl=trainControl(method="cv",number=input$cvFolds))
            fitLogit
        }
+
     }
     else {
         if(input$preds=="All"){
             fitTree<-train(default ~ ., data=creditData, method="rpart",
                             preProcess=c("center","scale"),
-                            trControl=trainControl(method="cv",number=10),
+                            trControl=trainControl(method="cv",number=input$cvFolds),
                             tuneGrid=NULL)
             fitTree
         } 
@@ -126,11 +134,35 @@ shinyServer(function(input, output, session) {
             myexp <- paste0("default", "~", input$preds)
             fitTree<-train(as.formula(myexp), data=creditData, method="rpart",
                            preProcess=c("center","scale"),
-                           trControl=trainControl(method="cv",number=10),
+                           trControl=trainControl(method="cv",number=input$cvFolds),
                            tuneGrid=NULL)
             fitTree
         }
     }
+    })
+    
+    output$pResults<-renderPrint({
+      myexp <- paste0("default", "~", "PAY_0")
+      if(input$mType=="Logistic Regression"){
+          fitLogitPred<-train(as.formula(myexp), data=creditData, method="glm", family="binomial", 
+                      preProcess=c("center","scale"), 
+                        trControl=trainControl(method="cv",number=input$cvFolds))
+          
+          myPred<-as.numeric(input$payPred)
+          predPay<-predict(fitLogitPred,newdata= data.frame(PAY_0=c(myPred)),type="prob")
+          paste0("Probability of default is: ",predPay[1,2])
+      }
+      else{
+        fitTreePred<-train(as.formula(myexp), data=creditData, method="rpart",
+                           preProcess=c("center","scale"),
+                           trControl=trainControl(method="cv",number=input$cvFolds),
+                           tuneGrid=NULL)
+        myPred<-as.numeric(input$payPred)
+        predPay<-predict(fitTreePred,newdata= data.frame(PAY_0=c(myPred)),type="prob")
+        paste0("Probability of default is: ",predPay[1,2])
+        
+      }
+       
     })
     
     output$dataTable <- renderTable({
