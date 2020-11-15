@@ -46,6 +46,7 @@ shinyServer(function(input, output, session) {
         } else {
             g + geom_histogram(aes_string(x=input$histVar))
         }
+
     })
     
     #create dynamic title

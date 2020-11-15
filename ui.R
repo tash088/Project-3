@@ -53,7 +53,11 @@ shinyUI(fluidPage(
                              selectizeInput("boxVar", "Select y variable for boxplot:", 
                                             selected = "LIMIT_BAL", 
                                             choices = c("LIMIT_BAL","AGE")),
-            )
+            ),
+            
+            
+            downloadButton('downloadPlot', 'Download Plot')
+            
             ),
             
             #sidebar settings for "Clustering" tab
