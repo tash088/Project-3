@@ -46,8 +46,16 @@ shinyServer(function(input, output, session) {
         } else {
             g + geom_histogram(aes_string(x=input$histVar))
         }
-
+        
+        
     })
+    
+    output$downloadPlot <- downloadHandler(
+      filename = function() { paste('plot', '.png', sep='') },
+      content = function(file) {
+        ggsave(file,plot=output$creditPlot)
+      }
+    )
     
     #create dynamic title
     output$title<-renderUI({
@@ -177,6 +185,10 @@ shinyServer(function(input, output, session) {
     })
     
     
+
+    }
+)
     
     
-})
+    
+    
