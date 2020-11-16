@@ -50,10 +50,29 @@ shinyServer(function(input, output, session) {
         
     })
     
+    plotInput <- reactive({
+      
+      #create plot
+      g <- ggplot(creditData)
+      
+      if(input$gtype=="Boxplot"){
+        g <- g + geom_boxplot(aes_string(x="default",y=input$boxVar))
+        if(input$boxVar=="LIMIT_BAL"){g + ylim(0,750000)}
+        else{g+ylim(0,80)}
+        
+        
+        
+      } else {
+        g + geom_histogram(aes_string(x=input$histVar))
+      }
+      
+      
+    })
+    
     output$downloadPlot <- downloadHandler(
-      filename = function() { paste('plot', '.png', sep='') },
+      filename = function() { paste('creditPlot', '.png', sep='') },
       content = function(file) {
-        ggsave(file,plot=output$creditPlot)
+        ggsave(file, plot=plotInput(), device = "png")
       }
     )
     
