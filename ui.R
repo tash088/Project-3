@@ -103,8 +103,7 @@ shinyUI(fluidPage(
                              value=5,min=2,max=10,step=1),
                 
                 "The results indicate that PAY_0 (# of months behind in prior month, where 0 indicates current) 
-                has the most predictive power. Use the dropdown below to predict the probability of default based
-                on the PAY_0 value.",
+                has the most predictive power.",
                         
                 #User can select a value for the PAY_0 for prediction
                 selectizeInput("payPred","Select a value for PAY_0 to see the resulting probability of default:",
@@ -126,7 +125,7 @@ shinyUI(fluidPage(
                               choices=list("Grad School","University","Highschool","Other","Do Not Subset")),
                 
                 #Button to allow user to save the data as a CSV file
-                actionButton("save","Save CSV")
+                actionButton("save","Save CSV (in Working Directory)")
             )
             
             
@@ -153,9 +152,9 @@ shinyUI(fluidPage(
                      allow the user to run",
                      em("Logistic Regression"),
                      "and/or",
-                     em("Decision Trees"),
-                     "models to predict whether a borrower will default. On the data tab, 
-                     you can view the raw data and save it out to a CSV
+                     em("Decision Tree"),
+                     "models to predict whether a borrower had defaulted in October 2005. 
+                     On the data tab, you can view the raw data and save it out to a CSV
                      file if desired. Simply click on the tabs at the top of the page to 
                      navigate between them.",
                      br(),
@@ -184,13 +183,17 @@ shinyUI(fluidPage(
                      uiOutput("mJ"),
                      textOutput("model"),
                     verbatimTextOutput("mResults"),
-                    verbatimTextOutput("pResults")
+                    h5("Prediction result using PAY_0:"),
+                    verbatimTextOutput("pResults"),
+                    h5("Note: Model results may take a few seconds to process and display")
                      ),
+            
             
             #Output for Data tab
             tabPanel("Data", value=5,
                      textOutput("data"),
-                     tableOutput("dataTable")
+                     tableOutput("dataTable"),
+                     h5("Note: Data may take a few seconds to load")
                      ),
             
             id="tabselected"
