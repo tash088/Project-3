@@ -125,7 +125,7 @@ shinyUI(fluidPage(
                               choices=list("Grad School","University","Highschool","Other","Do Not Subset")),
                 
                 #Button to allow user to save the data as a CSV file
-                actionButton("save","Save CSV (in Working Directory)")
+                downloadButton('downloadData', 'Download CSV')
             )
             
             

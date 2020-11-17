@@ -203,10 +203,34 @@ shinyServer(function(input, output, session) {
         if(input$edRBDat=="University"){creditData<-filter(creditData,EDUCATION==2)}
         if(input$edRBDat=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
         if(input$edRBDat=="Other"){creditData<-filter(creditData,EDUCATION==4)}
-        if(input$save>0){write.csv(creditData,"./creditData_file.csv", row.names = FALSE)}
         view(creditData)
         
     })
+    
+  dataInput <-reactive({
+      #apply marriage status filter if applicable
+      if(input$marRBDat=="Married"){creditData<-filter(creditData,MARRIAGE==1)}
+      if(input$marRBDat=="Single"){creditData<-filter(creditData,MARRIAGE==2)}
+      #apply education filter if applicable
+      if(input$edRBDat=="Grad School"){creditData<-filter(creditData,EDUCATION==1)}
+      if(input$edRBDat=="University"){creditData<-filter(creditData,EDUCATION==2)}
+      if(input$edRBDat=="Highschool"){creditData<-filter(creditData,EDUCATION==3)}
+      if(input$edRBDat=="Other"){creditData<-filter(creditData,EDUCATION==4)}
+      if(input$save>0){write.csv(creditData,"./creditData_file.csv", row.names = FALSE)}
+      creditData
+      
+    })
+  
+  #This saves the CSV if the user clicks the download button
+  output$downloadData <- downloadHandler(
+    filename = function() {
+      paste("creditData", ".csv", sep="")
+    },
+    content = function(file) {
+      write.csv(creditData, file)
+    }
+  )
+    
 
     }
 )
